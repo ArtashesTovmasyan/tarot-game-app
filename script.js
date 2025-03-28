@@ -261,24 +261,7 @@ function restart() {
 }
 
 // Тестовая функция для проверки скролла
-function testScroll() {
-    console.log("testScroll called");
-    deckDiv.innerHTML = "";
-    resultDiv.innerHTML = `
-        <p>Это тестовый текст для проверки скролла. Мы добавим много текста, чтобы убедиться, что страница прокручивается.</p>
-        <p>Параграф 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-        <p>Параграф 2: Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-        <p>Параграф 3: Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-        <p>Параграф 4: Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>Параграф 5: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-        <p>Параграф 6: Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-        <p>Параграф 7: Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-        <p>Параграф 8: Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p>Параграф 9: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-        <p>Параграф 10: Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-    `;
-    gsap.to(resultDiv, { opacity: 1, y: 10, duration: 0.5, ease: "power2.out" });
-}
+
 
 // Добавляем обработчики событий для всех кнопок
 document.getElementById("draw-single").addEventListener("click", () => {
