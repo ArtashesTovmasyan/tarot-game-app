@@ -2,9 +2,10 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tarot Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,12 +13,13 @@
     <h1>🔮 Чертоги Таро</h1>
     <p id="welcome-text">Добро пожаловать, смельчак! Карты ждут твоего выбора.</p>
     <div class="buttons">
-        <button onclick="startDraw('single')">Вытянуть карту 🔮</button>
-        <button onclick="startDraw('three')">Расклад из трёх 🌌</button>
-        <button onclick="showDailyHoroscope()">Гороскоп дня 🌟</button>
-        <button onclick="showDailyCard()">Карта дня 🎴</button>
-        <button onclick="showHelp()">Помощь ❓</button>
-        <button onclick="restart()">Перезапустить ♻️</button>
+        <button id="draw-single">Вытянуть карту 🔮</button>
+        <button id="draw-three">Расклад из трёх 🌌</button>
+        <button id="daily-horoscope">Гороскоп дня 🌟</button>
+        <button id="daily-card">Карта дня 🎴</button>
+        <button id="help">Помощь ❓</button>
+        <button id="restart">Перезапустить ♻️</button>
+        <button id="test-scroll">Тест скролла 📜</button> <!-- Новая кнопка -->
     </div>
     <div id="deck" class="deck"></div>
     <div id="result" class="result"></div>

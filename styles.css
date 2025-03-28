@@ -2,53 +2,58 @@ body {
     background: linear-gradient(135deg, #1e1e2f, #3a2d5e);
     color: #fff;
     font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     margin: 0;
-    overflow: hidden;
+    padding: 0;
+    box-sizing: border-box;
+    min-height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .container {
     text-align: center;
-    padding: 20px;
+    padding: 2rem;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 h1 {
-    font-size: 28px;
-    margin-bottom: 10px;
+    font-size: 2rem;
+    margin-bottom: 1rem;
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 p {
-    font-size: 16px;
-    margin-bottom: 20px;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 #welcome-text {
     font-style: italic;
     opacity: 0;
-    animation: fadeIn 1s ease forwards;
 }
 
 .buttons {
     display: flex;
     justify-content: center;
-    gap: 15px;
-    margin-bottom: 20px;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
     flex-wrap: wrap;
 }
 
 button {
     background: #6b5b95;
     border: none;
-    padding: 10px 20px;
+    padding: 0.75rem 1.5rem;
     color: #fff;
-    font-size: 16px;
+    font-size: 1rem;
     border-radius: 5px;
     cursor: pointer;
     transition: transform 0.2s;
+    white-space: nowrap;
 }
 
 button:hover {
@@ -58,44 +63,60 @@ button:hover {
 .deck {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 1rem;
     flex-wrap: wrap;
 }
 
 .card {
-    width: 80px;
-    height: 120px;
+    width: 20vw;
+    max-width: 80px;
+    height: 30vw;
+    max-height: 120px;
     background: #2a1e5c url('cards/card-back.jpeg') center/cover;
     border-radius: 8px;
     cursor: pointer;
-    transition: transform 0.5s;
-}
-
-.card:hover {
-    transform: scale(1.1);
-}
-
-.card.reveal {
-    animation: flipCard 0.8s ease forwards;
 }
 
 .result {
-    margin-top: 20px;
-    font-size: 16px;
-    max-width: 320px;
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
     opacity: 0;
+    min-height: 200px;
 }
 
-.result.show {
-    animation: fadeIn 0.5s ease forwards;
-}
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.5rem;
+    }
 
-@keyframes flipCard {
-    0% { transform: rotateY(0deg); }
-    50% { transform: rotateY(90deg); }
-    100% { transform: rotateY(0deg); background: #fff; }
-}
+    p {
+        font-size: 0.9rem;
+    }
 
-@keyframes fadeIn {
-    to { opacity: 1; }
+    button {
+        background: #6b5b95;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        color: #fff;
+        font-size: 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: transform 0.2s;
+        white-space: nowrap;
+        pointer-events: auto; /* Убедимся, что кнопки реагируют на клики */
+    }
+
+    .card {
+        width: 18vw;
+        max-width: 70px;
+        height: 27vw;
+        max-height: 105px;
+    }
+
+    .result {
+        font-size: 0.9rem;
+    }
 }

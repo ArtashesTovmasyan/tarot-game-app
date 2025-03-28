@@ -1,3 +1,14 @@
+// Инициализация Telegram Web App
+if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.ready();
+    window.Telegram.WebApp.expand();
+    window.Telegram.WebApp.enableClosingConfirmation();
+    window.Telegram.WebApp.disableVerticalSwipes();
+    console.log("Telegram Web App initialized successfully");
+} else {
+    console.error("Telegram Web App is not available");
+}
+
 const tarotCards = {
     "0. Дурак": {
         "upright": "🌟 О, смельчак, что танцует на краю пропасти! Судьба манит тебя в неизведанное, где каждый шаг — это прыжок в бездну возможностей. Ты свободен, как ветер, и наивен, как дитя, что верит в сказки. Куда приведёт этот путь? Ха-ха, карты молчат, но звёзды смеются.",
@@ -100,40 +111,67 @@ const horoscopes = {
     "Скорпион": "♏ Скорпионы, ваша страсть зажжёт огонь, но не сожгите всё вокруг.",
     "Стрелец": "♐ Стрельцы, приключения зовут! Не бойтесь шагнуть в неизвестность.",
     "Козерог": "♑ Козероги, упорство приведёт к цели, но не забывайте отдыхать.",
-    "Водолей": "♒ Водолеи, ваши идеи вдохновляют — делитесь ими с миром!",
-    "Рыбы": "♓ Рыбы, плывите по течению — судьба сама расставит всё по местам."
+    "Водолей": "♒ Водолеи, ваши идеи — как звёзды, сияйте и вдохновляйте!",
+    "Рыбы": "♓ Рыбы, плывите по течению интуиции — оно выведет к сокровищам."
 };
 
-// Инициализация Telegram Web App
-window.Telegram.WebApp.ready();
-window.Telegram.WebApp.expand();
-
-const BOT_TOKEN = "8044469118:AAHwYKnWu_Vq1EKzGaqKpusWZV-27onF2_8";
-const CHANNEL_ID = "@TarotHoroscope"; // Замени на ID твоего канала
-
+// Элементы DOM
 const deckDiv = document.getElementById("deck");
 const resultDiv = document.getElementById("result");
-const welcomeText = document.getElementById("welcome-text");
 
-// Приветствие при запуске
-welcomeText.innerHTML = "🔮 О, смельчак, что осмелился войти! Добро пожаловать в чертоги Таро, где судьба играет в кости, а я — твой насмешливый проводник. Карты ждут, чтобы поведать тебе сказки о прошлом, настоящем и будущем — или просто посмеяться над твоими планами. Выбери действие, если не боишься их острого языка!";
+// Анимация приветственного текста
+gsap.to("#welcome-text", { opacity: 1, duration: 2, ease: "power2.out" });
 
+// Функция для случайного выбора
+function randomChoice(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// Функция отправки сообщения в Telegram-канал
+function sendToChannel(message) {
+    if (window.Telegram && window.Telegram.WebApp) {
+        const chatId = "@TarotHoroscope";
+        const url = `https://api.telegram.org/bot${window.Telegram.WebApp.initDataUnsafe.bot_token}/sendMessage`;
+        fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: message,
+                parse_mode: "HTML"
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    console.log("Сообщение отправлено в канал:", message);
+                } else {
+                    console.error("Ошибка отправки в канал:", data);
+                }
+            })
+            .catch(error => console.error("Ошибка fetch:", error));
+    }
+}
+
+// Функция для вытягивания карт
 function startDraw(type) {
+    console.log("startDraw called with type:", type);
     deckDiv.innerHTML = "";
     resultDiv.innerHTML = "";
-    resultDiv.classList.remove("show");
+    gsap.to(resultDiv, { opacity: 0, duration: 0.3 });
 
     const numCards = type === "single" ? 1 : 3;
     for (let i = 0; i < numCards; i++) {
         const cardDiv = document.createElement("div");
         cardDiv.classList.add("card");
-        cardDiv.onclick = () => revealCard(cardDiv, type, i);
+        cardDiv.addEventListener("click", () => revealCard(cardDiv, type, i));
         deckDiv.appendChild(cardDiv);
+        gsap.from(cardDiv, { opacity: 0, y: 50, duration: 0.5, delay: i * 0.1, ease: "back.out(1.7)" });
     }
 }
 
+// Функция переворота карты
 function revealCard(cardDiv, type, index) {
-    cardDiv.classList.add("reveal");
     cardDiv.style.pointerEvents = "none"; // Отключаем повторный клик
 
     const card = randomChoice(Object.entries(tarotCards));
@@ -141,85 +179,133 @@ function revealCard(cardDiv, type, index) {
     const position = isReversed ? "перевёрнутая 🔃" : "прямая ⬆️";
     const meaning = isReversed ? card[1].reversed : card[1].upright;
 
-    setTimeout(() => {
-        // Пока нет изображений, оставляем карту белой после переворота
-        cardDiv.style.transform = isReversed ? "rotate(180deg)" : "rotate(0deg)";
+    // Анимация переворота карты с GSAP
+    gsap.to(cardDiv, {
+        rotationY: 90,
+        duration: 0.4,
+        ease: "power2.inOut",
+        onComplete: () => {
+            cardDiv.style.background = "#fff";
+            cardDiv.style.transform = isReversed ? "rotate(180deg)" : "rotate(0deg)";
+            gsap.to(cardDiv, {
+                rotationY: 0,
+                duration: 0.4,
+                ease: "power2.inOut"
+            });
+        }
+    });
 
+    // Показываем результат с анимацией
+    setTimeout(() => {
         if (type === "single") {
             resultDiv.innerHTML = `🎴 Твоя карта: <b>${card[0]}</b> (${position})<br>${meaning}`;
-            resultDiv.classList.add("show");
+            gsap.to(resultDiv, { opacity: 1, y: 10, duration: 0.5, ease: "power2.out" });
         } else {
             const times = ["⏳ Прошлое", "⏰ Настоящее", "🔮 Будущее"];
             if (index === 0) resultDiv.innerHTML = "🌌 <b>Расклад Таро</b><br><br>";
             resultDiv.innerHTML += `${times[index]}: <b>${card[0]}</b> (${position})<br>${meaning}<br><br>`;
-            resultDiv.classList.add("show");
+            gsap.to(resultDiv, { opacity: 1, y: 10, duration: 0.5, ease: "power2.out" });
         }
     }, 800); // Синхронизация с анимацией
 }
 
-function showHelp() {
-    deckDiv.innerHTML = "";
-    resultDiv.innerHTML = "🔮 Я — твой спутник в мире Таро, чуть мудрый, чуть ехидный. Вот мои фокусы:<br>" +
-        "- <b>Вытянуть карту 🔮</b> — одна карта дня<br>" +
-        "- <b>Расклад из трёх 🌌</b> — прошлое, настоящее, будущее<br>" +
-        "- <b>Гороскоп дня 🌟</b> — совет от звёзд<br>" +
-        "- <b>Карта дня 🎴</b> — твоя карта на сегодня<br>" +
-        "- <b>Перезапустить ♻️</b> — встряхнуть судьбу<br>" +
-        "Прямые или перевёрнутые — карты всегда удивят!";
-    resultDiv.classList.add("show");
-}
-
-function restart() {
-    deckDiv.innerHTML = "";
-    resultDiv.innerHTML = "♻️ Судьба перетасовала колоду! Карты хихикают, готовые к новому танцу.";
-    resultDiv.classList.add("show");
-    welcomeText.innerHTML = "🔮 Судьба перетасовала колоду! Карты хихикают, готовые к новому танцу. Выбери действие:";
-}
-
+// Функция для гороскопа дня
 function showDailyHoroscope() {
+    console.log("showDailyHoroscope called");
     deckDiv.innerHTML = "";
     const signs = Object.keys(horoscopes);
-    const randomSign = randomChoice(signs);
-    const message = `🌟 <b>Гороскоп дня для ${randomSign}</b><br>${horoscopes[randomSign]}`;
+    const sign = randomChoice(signs);
+    const message = `🌟 <b>Гороскоп дня для ${sign}</b><br>${horoscopes[sign]}`;
     resultDiv.innerHTML = message;
-    resultDiv.classList.add("show");
-    sendToChannel(message); // Отправляем в канал
+    gsap.to(resultDiv, { opacity: 1, y: 10, duration: 0.5, ease: "power2.out" });
+    sendToChannel(message);
 }
 
+// Функция для карты дня
 function showDailyCard() {
+    console.log("showDailyCard called");
     deckDiv.innerHTML = "";
     const card = randomChoice(Object.entries(tarotCards));
     const isReversed = Math.random() > 0.5;
     const position = isReversed ? "перевёрнутая 🔃" : "прямая ⬆️";
     const meaning = isReversed ? card[1].reversed : card[1].upright;
-    const message = `🎴 <b>Карта дня</b>: <b>${card[0]}</b> (${position})<br>${meaning}`;
+    const message = `🎴 <b>Карта дня: ${card[0]}</b> (${position})<br>${meaning}`;
     resultDiv.innerHTML = message;
-    resultDiv.classList.add("show");
-    sendToChannel(message); // Отправляем в канал
+    gsap.to(resultDiv, { opacity: 1, y: 10, duration: 0.5, ease: "power2.out" });
+    sendToChannel(message);
 }
 
-async function sendToChannel(message) {
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-    const params = {
-        chat_id: CHANNEL_ID,
-        text: message,
-        parse_mode: "HTML"
-    };
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(params)
-        });
-        const data = await response.json();
-        if (!data.ok) {
-            console.error("Ошибка отправки в канал:", data);
-        }
-    } catch (error) {
-        console.error("Ошибка:", error);
-    }
+// Функция для помощи
+function showHelp() {
+    console.log("showHelp called");
+    deckDiv.innerHTML = "";
+    resultDiv.innerHTML = `
+        <b>📜 Помощь</b><br><br>
+        🔮 <b>Вытянуть карту</b>: Получи одно послание от карт Таро.<br>
+        🌌 <b>Расклад из трёх</b>: Узнай о прошлом, настоящем и будущем.<br>
+        🌟 <b>Гороскоп дня</b>: Получи предсказание для случайного знака зодиака.<br>
+        🎴 <b>Карта дня</b>: Одна карта, которая задаст тон твоему дню.<br>
+        ♻️ <b>Перезапустить</b>: Очисти экран и начни заново.<br><br>
+        Карты могут быть прямыми ⬆️ или перевёрнутыми 🔃, и их значение меняется. Доверяй интуиции!
+    `;
+    gsap.to(resultDiv, { opacity: 1, y: 10, duration: 0.5, ease: "power2.out" });
 }
 
-function randomChoice(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
+// Функция перезапуска
+function restart() {
+    console.log("restart called");
+    deckDiv.innerHTML = "";
+    resultDiv.innerHTML = "";
+    gsap.to(resultDiv, { opacity: 0, duration: 0.3 });
+    gsap.to("#welcome-text", { opacity: 1, duration: 2, ease: "power2.out" });
 }
+
+// Тестовая функция для проверки скролла
+function testScroll() {
+    console.log("testScroll called");
+    deckDiv.innerHTML = "";
+    resultDiv.innerHTML = `
+        <p>Это тестовый текст для проверки скролла. Мы добавим много текста, чтобы убедиться, что страница прокручивается.</p>
+        <p>Параграф 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p>Параграф 2: Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <p>Параграф 3: Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+        <p>Параграф 4: Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <p>Параграф 5: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p>Параграф 6: Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <p>Параграф 7: Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+        <p>Параграф 8: Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <p>Параграф 9: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p>Параграф 10: Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    `;
+    gsap.to(resultDiv, { opacity: 1, y: 10, duration: 0.5, ease: "power2.out" });
+}
+
+// Добавляем обработчики событий для всех кнопок
+document.getElementById("draw-single").addEventListener("click", () => {
+    console.log("draw-single clicked");
+    startDraw("single");
+});
+document.getElementById("draw-three").addEventListener("click", () => {
+    console.log("draw-three clicked");
+    startDraw("three");
+});
+document.getElementById("daily-horoscope").addEventListener("click", () => {
+    console.log("daily-horoscope clicked");
+    showDailyHoroscope();
+});
+document.getElementById("daily-card").addEventListener("click", () => {
+    console.log("daily-card clicked");
+    showDailyCard();
+});
+document.getElementById("help").addEventListener("click", () => {
+    console.log("help clicked");
+    showHelp();
+});
+document.getElementById("restart").addEventListener("click", () => {
+    console.log("restart clicked");
+    restart();
+});
+document.getElementById("test-scroll").addEventListener("click", () => {
+    console.log("test-scroll clicked");
+    testScroll();
+});
