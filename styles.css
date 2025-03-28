@@ -1,0 +1,94 @@
+body {
+    background: linear-gradient(135deg, #1e1e2f, #3a2d5e);
+    color: #fff;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+p {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+button {
+    background: #6b5b95;
+    border: none;
+    padding: 10px 20px;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+.deck {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.card {
+    width: 80px;
+    height: 120px;
+    background: #2a1e5c url('card-back.jpg') center/cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.5s;
+}
+
+.card:hover {
+    transform: scale(1.1);
+}
+
+.card.reveal {
+    animation: flipCard 0.8s ease forwards;
+}
+
+.result {
+    margin-top: 20px;
+    font-size: 16px;
+    max-width: 320px;
+    opacity: 0;
+}
+
+.result.show {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes flipCard {
+    0% { transform: rotateY(0deg); }
+    50% { transform: rotateY(90deg); }
+    100% { transform: rotateY(0deg); background: #fff url('card-front.jpg') center/cover; }
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
