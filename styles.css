@@ -65,7 +65,7 @@ button:hover {
 .card {
     width: 80px;
     height: 120px;
-    background: #2a1e5c url('card-back.jpg') center/cover;
+    background: #2a1e5c url('cards/card-back.jpeg') center/cover;
     border-radius: 8px;
     cursor: pointer;
     transition: transform 0.5s;
