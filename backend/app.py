@@ -9,12 +9,9 @@ app = Flask(__name__, static_folder="../static")
 
 # Настройка логирования
 logging.basicConfig(
-    filename="logs/mini_app.log",
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    encoding="utf-8"
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
-
 # Карты Таро (Старшие Арканы)
 tarot_cards = {
     "0. Дурак": {
