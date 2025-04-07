@@ -1,5 +1,47 @@
 const BASE_URL = "https://tarot-game-app.onrender.com";
 
+// Обратное сопоставление: русское название -> английское для карт
+const cardNameMapping = {
+    "0. Дурак": "thefool",
+    "1. Маг": "themagician",
+    "2. Верховная Жрица": "thehighpriestess",
+    "3. Императрица": "theempress",
+    "4. Император": "theemperor",
+    "5. Иерофант": "thehierophant",
+    "6. Влюбленные": "thelovers",
+    "7. Колесница": "thechariot",
+    "8. Сила": "strength",
+    "9. Отшельник": "thehermit",
+    "10. Колесо Фортуны": "wheeloffortune",
+    "11. Справедливость": "justice",
+    "12. Повешенный": "thehangedman",
+    "13. Смерть": "death",
+    "14. Умеренность": "temperance",
+    "15. Дьявол": "thedevil",
+    "16. Башня": "thetower",
+    "17. Звезда": "thestar",
+    "18. Луна": "themoon",
+    "19. Солнце": "thesun",
+    "20. Суд": "judgement",
+    "21. Мир": "theworld"
+};
+
+// Обратное сопоставление: русское название -> английское для знаков зодиака
+const zodiacSignMapping = {
+    "Овен ♈": "aries",
+    "Телец ♉": "taurus",
+    "Близнецы ♊": "gemini",
+    "Рак ♋": "cancer",
+    "Лев ♌": "leo",
+    "Дева ♍": "virgo",
+    "Весы ♎": "libra",
+    "Скорпион ♏": "scorpio",
+    "Стрелец ♐": "sagittarius",
+    "Козерог ♑": "capricorn",
+    "Водолей ♒": "aquarius",
+    "Рыбы ♓": "pisces"
+};
+
 document.addEventListener("DOMContentLoaded", () => {
     console.log("Страница загружена, начинаю загрузку данных...");
     loadSpreads();
@@ -84,8 +126,8 @@ function loadZodiacSigns() {
                 select.innerHTML = '<option value="">Выберите знак</option>';
                 signs.forEach(sign => {
                     const option = document.createElement("option");
-                    // Извлекаем только название знака (без символа)
-                    const signName = sign.split(" ")[0];
+                    // Используем английское название для value
+                    const signName = zodiacSignMapping[sign] || sign;
                     option.value = signName;
                     option.textContent = sign;
                     select.appendChild(option);
@@ -145,12 +187,14 @@ function loadCards() {
 
 function showCardDetails(cardName) {
     console.log(`Запрашиваю данные для карты: ${cardName}`);
-    fetchWithErrorHandling(`${BASE_URL}/api/card/${encodeURIComponent(cardName)}`)
+    // Преобразуем русское название в английское
+    const englishCardName = cardNameMapping[cardName] || cardName;
+    fetchWithErrorHandling(`${BASE_URL}/api/card/${encodeURIComponent(englishCardName)}`)
         .then(card => {
             const cardsList = document.getElementById("cards-list");
             if (card && !card.error) {
                 console.log("Полученные данные карты:", card);
-                cardsList.innerHTML = `<h3>${card.name}</h3>` +
+                cardsList.innerHTML = `<h3>${cardName}</h3>` +
                     `<div class="card-details">` +
                     `<strong>Прямое значение ⬆️:</strong><br>${card.upright}<br><br>` +
                     `<strong>Перевёрнутое значение 🔃:</strong><br>${card.reversed}` +
