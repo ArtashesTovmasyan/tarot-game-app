@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таро и Гороскоп</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h1>Таро и Гороскоп</h1>
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('spreads')">Расклады</div>
+        <div class="tab" onclick="showTab('history')">История</div>
+        <div class="tab" onclick="showTab('horoscope')">Гороскоп</div>
+        <div class="tab" onclick="showTab('cards')">Карты</div>
+    </div>
+
+    <div id="spreads" class="tab-content active">
+        <h2>Выберите расклад</h2>
+        <div id="spreads-list" class="spreads-list"></div>
+    </div>
+
+    <div id="history" class="tab-content">
+        <h2>История раскладов</h2>
+        <div id="history-list"></div>
+    </div>
+
+    <div id="horoscope" class="tab-content">
+        <h2>Гороскоп</h2>
+        <select id="zodiac-sign">
+            <option value="">Выберите знак</option>
+        </select>
+        <div id="horoscope-result"></div>
+    </div>
+
+    <div id="cards" class="tab-content">
+        <h2>Карты Таро</h2>
+        <div id="cards-list" class="cards-list"></div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
