@@ -195,10 +195,8 @@ def get_horoscope(sign):
 # API: Получить список карт
 @app.route("/api/cards")
 def get_cards():
-    # Возвращаем английские названия карт
-    english_card_names = list(card_name_mapping.keys())
-    return jsonify(english_card_names)
-
+    # Возвращаем русские названия карт
+    return jsonify(list(tarot_cards.keys()))
 # API: Получить значения карты по её имени
 @app.route("/api/card/<card_name>")
 def get_card(card_name):
