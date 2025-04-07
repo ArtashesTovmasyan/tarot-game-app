@@ -1,4 +1,5 @@
 from flask import Flask, send_from_directory, request, jsonify
+from flask_cors import CORS
 import random
 import json
 import os
@@ -6,12 +7,14 @@ from datetime import datetime
 import logging
 
 app = Flask(__name__, static_folder="../static")
+CORS(app)  # Разрешает запросы с любого источника
 
 # Настройка логирования
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
+
 # Карты Таро (Старшие Арканы)
 tarot_cards = {
     "0. Дурак": {
@@ -104,6 +107,32 @@ tarot_cards = {
     }
 }
 
+# Сопоставление английских названий карт с русскими
+card_name_mapping = {
+    "thefool": "0. Дурак",
+    "themagician": "1. Маг",
+    "thehighpriestess": "2. Верховная Жрица",
+    "theempress": "3. Императрица",
+    "theemperor": "4. Император",
+    "thehierophant": "5. Иерофант",
+    "thelovers": "6. Влюбленные",
+    "thechariot": "7. Колесница",
+    "strength": "8. Сила",
+    "thehermit": "9. Отшельник",
+    "wheeloffortune": "10. Колесо Фортуны",
+    "justice": "11. Справедливость",
+    "thehangedman": "12. Повешенный",
+    "death": "13. Смерть",
+    "temperance": "14. Умеренность",
+    "thedevil": "15. Дьявол",
+    "thetower": "16. Башня",
+    "thestar": "17. Звезда",
+    "themoon": "18. Луна",
+    "thesun": "19. Солнце",
+    "judgement": "20. Суд",
+    "theworld": "21. Мир"
+}
+
 # Список знаков зодиака
 zodiac_signs = {
     "aries": "Овен ♈",
@@ -152,7 +181,10 @@ def get_zodiac_signs():
 def get_horoscope(sign):
     sign_clean = sign.split(" ")[0]
     try:
-        with open("data/horoscopes.json", "r", encoding="utf-8") as f:
+        # Исправляем путь к файлу
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        horoscopes_path = os.path.join(base_dir, "..", "data", "horoscopes.json")
+        with open(horoscopes_path, "r", encoding="utf-8") as f:
             horoscopes = json.load(f)
         horoscope = horoscopes.get(sign_clean, "Гороскоп не найден.")
         return jsonify({"sign": sign, "horoscope": horoscope})
@@ -168,10 +200,14 @@ def get_cards():
 # API: Получить значения карты по её имени
 @app.route("/api/card/<card_name>")
 def get_card(card_name):
-    card = tarot_cards.get(card_name)
-    if card:
+    # Приводим имя карты к нижнему регистру
+    card_name_lower = card_name.lower()
+    # Ищем соответствующее русское название
+    card_key = card_name_mapping.get(card_name_lower)
+    if card_key and card_key in tarot_cards:
+        card = tarot_cards[card_key]
         return jsonify({
-            "name": card_name,
+            "name": card_key,  # Возвращаем русское название
             "upright": card["upright"],
             "reversed": card["reversed"]
         })
@@ -201,7 +237,8 @@ def get_spread(spread_name):
         "cards": result,
         "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
-    history_file = f"data/history_{user_id}.json"
+    # Используем временную директорию /tmp
+    history_file = f"/tmp/history_{user_id}.json"
     try:
         if os.path.exists(history_file):
             with open(history_file, "r", encoding="utf-8") as f:
@@ -220,7 +257,7 @@ def get_spread(spread_name):
 # API: Получить историю раскладов
 @app.route("/api/history/<user_id>")
 def get_history(user_id):
-    history_file = f"data/history_{user_id}.json"
+    history_file = f"/tmp/history_{user_id}.json"
     try:
         if os.path.exists(history_file):
             with open(history_file, "r", encoding="utf-8") as f:
