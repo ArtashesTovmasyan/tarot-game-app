@@ -174,8 +174,8 @@ def get_spreads():
 # API: Получить список знаков зодиака
 @app.route("/api/zodiac_signs")
 def get_zodiac_signs():
-    return jsonify(list(zodiac_signs.values()))
-
+    # Возвращаем ключи (английские названия)
+    return jsonify(list(zodiac_signs.keys()))
 # API: Получить гороскоп для знака
 @app.route("/api/horoscope/<sign>")
 def get_horoscope(sign):
@@ -195,7 +195,9 @@ def get_horoscope(sign):
 # API: Получить список карт
 @app.route("/api/cards")
 def get_cards():
-    return jsonify(list(tarot_cards.keys()))
+    # Возвращаем английские названия карт
+    english_card_names = list(card_name_mapping.keys())
+    return jsonify(english_card_names)
 
 # API: Получить значения карты по её имени
 @app.route("/api/card/<card_name>")
